@@ -18,16 +18,12 @@ const  btnFilter = document.querySelector('.btn-filter')
 const btnFilterTous = document.querySelector('#filterTous')
 const loginContainer = document.querySelector('.login-action-container')
 
-const modalWrapper = document.querySelector('.modal-wrapper');
-const modalUploadContainer = document.querySelector('#modal-upload-id');
-const modalModificationContainer = document.querySelector('#modal-gallery-id');
 
-const modalCtrl = document.querySelector('.modal-controleur')
 const cardGallery = document.querySelectorAll('.card-gallery')
 const modalGallery = document.querySelector('.modal-gallery');
 const token = localStorage.getItem('token');
-const formUpload = document.querySelector('#modal-upload-form')
-const inputFileImage = document.querySelector('#imgUpload');
+
+
 
 
 //-------------------- Categories ----------------------------
@@ -45,7 +41,6 @@ function init () {
         })
         if(isTokenPresent){
             console.log("token present");
-            
             fetch('modal.html')
             .then(response => {
               if (response.ok) {
@@ -54,22 +49,75 @@ function init () {
                 )
             .then(htmlModal => {
                 loginContainer.innerHTML = htmlModal
+                console.log( loginContainer);
+
+                    console.log("modal import 1"); 
+                    console.log("modal import 2");
+    
+                    console.log("page chargé")
+                    buildContent()
+                    submitFunction()
+                    loginContainer.addEventListener('click',function(event){
+                        const overlay = document.querySelector('.overlay')
+                        const modalXmark = document.querySelector('.modal-icon .js-modal-allclose');
+                        const modalArrow = document.querySelector('.fa-solid.fa-arrow-left');
+                        const modalCtrl = document.querySelector('.modal-controleur')
+                        const modalWrapper = document.querySelector('.modal-wrapper');
+                        const modalModificationContainer = document.querySelector('#modal-gallery-id');
+                        const modalUploadContainer = document.querySelector('#modal-upload-id');
+                        if(event.target.classList.contains('js-modal-open')){
+                            console.log('click');
+                            event.preventDefault();
+                            overlay.classList.add('active')
+                            modalWrapper.setAttribute('class','modal-wrapper active height');
+                            modalModificationContainer.classList.add('active')
+                            modalCtrl.classList.add('active')
+                        }
+                        else if (event.target.classList.contains('js-modal-allclose')){
+                            console.log('click');
+                            event.preventDefault();
+                            overlay.classList.remove('active');
+                            modalCtrl.classList.remove('active');
+                            modalWrapper.setAttribute('class','modal-wrapper');
+                            modalModificationContainer.classList.remove('active');
+                            modalXmark.classList.remove('active');
+                            if(modalArrow.classList.contains('active')){modalArrow.classList.remove('active')}
+                            if(modalUploadContainer.classList.contains('active')){modalUploadContainer.classList.remove('active')}
+                        }
+                        else if (event.target.classList.contains('modal-modification-button')){
+                            event.preventDefault();
+                            modalModificationContainer.classList.remove('active');
+                            modalWrapper.classList.remove('height');
+                            modalUploadContainer.classList.add('active');
+                            modalArrow.classList.add('active')
+                        }
+                        else if (event.target.classList.contains('fa-arrow-left')){
+                            event.preventDefault();
+                            modalModificationContainer.classList.add('active');
+                            modalUploadContainer.classList.remove('active');
+                            modalArrow.classList.remove('active');
+                            modalWrapper.classList.add('height');
+                            const i = document.querySelector('.fa-image');
+                            const b = document.querySelector('#imgUploadLabel');
+                            const p = document.querySelector('.modal-upload-condition');
+                            const formUpload = document.querySelector('#modal-upload-form');
+                            formUpload.reset();
+                            i.style.opacity ='1';
+                            b.style.opacity ='1';
+                            p.style.opacity ='1';
+                        }
+                    })
+                    // const inputFileImage = document.querySelector('#imgUpload');
+                    // inputFileImage.addEventListener('change',(file) =>{ Affichage(file)})
+                    // const editionButton = document.querySelector('#Edition-Projet');
+                    // editionButton.addEventListener('click',(element) => {openModal(element); closeModal})
+                    // console.log("page chargé et function activé")
+
             })
-            try{
-                console.log("modal import 1"); 
-                console.log("modal import 2");
-            modalWrapper.addEventListener('load',() => {
-                console.log("page chargé")
-                buildContent()
-                submitFunction()
-                Affichage()
-                console.log("page chargé et function activé")
-            })
-            }
-            catch{ error => console.log("error:",error);}
+
         }
         else {
-            console.log("marche pas");
+            console.log("Pas connecté");
             return
         }
 };
@@ -242,118 +290,123 @@ function bannerLogin (element){
 
 //********************** OUVERTURE/FERMETURE/ SWITCH  MODAL *****/
 
-const openModal = async function (){ 
-    console.log('click');
-    const editionButton = document.querySelector('#Edition-Projet');
-    editionButton.addEventListener('click',(element) => {
-        element.preventDefault();
-        isActive(overlay);
-        isActive(modalWrapper);
-        wrapperHeightActive(modalWrapper);
-        isActive(modalModificationContainer);
-        isActive(modalCtrl);
-    })
+ 
 
-}
-const closeModal = async function (){
-    const overlay = document.querySelector('#modal-overlay');
-    const modalXmark = document.querySelector('.fa-xmark');
-    overlay.addEventListener('click',(e) => {
-            allClose(e)
-    });
-    modalXmark.addEventListener('click',(e) => {
-        allClose(e)
-});
-}
 
-// Switch de page modal sur le bouton
-const ajoutPhotoButton = async function (){
-    document.querySelector('.modal-modification-button')
-    ajoutPhotoButton.addEventListener('click',(e) => {
-    isEdit(e);
-    resetUploadContainer();
-})}
+// async function openModal (element){
+//         console.log('click');
+//         element.preventDefault();
+//         isActive(overlay);
+//         const modalWrapper = document.querySelector('.modal-wrapper');
+//         isActive(modalWrapper);
+//         wrapperHeightActive(modalWrapper);
+//         const modalModificationContainer = document.querySelector('#modal-gallery-id');
+//         isActive(modalModificationContainer);
+//         const modalCtrl = document.querySelector('.modal-controleur')
+//         isActive(modalCtrl);
+//     }
 
-// Switch de page modal sur le bouton
-const modalArrow = async function (){
-    document.querySelector('.fa-arrow-left');
-    modalArrow.addEventListener('click',(e) => {
-    e.preventDefault();
-    isClose(modalArrow)
-    isClose(modalUploadContainer);
-    wrapperHeightActive(modalWrapper);
-    isActive(modalModificationContainer);
-    resetUploadContainer();
-    if(document.querySelector('.imageDisplayUploadBox')!= null){
-    document.querySelector('.imageDisplayUploadBox').remove()}
-    else{return}
-})}
+// const closeModal = async function (){
+//     const overlay = document.querySelector('#modal-overlay');
+//     const modalXmark = document.querySelector('.fa-xmark');
+//     overlay.addEventListener('click',(e) => {
+//             allClose(e)
+//     });
+//     modalXmark.addEventListener('click',(e) => {
+//         allClose(e)
+// });
+// }
 
-const isActive = async function(e){
-    e.classList.add('active')
-    if(modalWrapper){
-        wrapperHeightActive(e)
-    }
-}
+// // Switch de page modal sur le bouton
+// const ajoutPhotoButton = async function (){
+//     document.querySelector('.modal-modification-button')
+//     ajoutPhotoButton.addEventListener('click',(e) => {
+//     isEdit(e);
+//     resetUploadContainer();
+// })}
 
-const isToggle = async function (e){
-    e.classList.toggle('active');
-}
+// // Switch de page modal sur le bouton
+// const modalArrow = async function (){
+//     document.querySelector('.fa-arrow-left');
+//     modalArrow.addEventListener('click',(e) => {
+//     e.preventDefault();
+//     isClose(modalArrow)
+//     isClose(modalUploadContainer);
+//     wrapperHeightActive(modalWrapper);
+//     isActive(modalModificationContainer);
+//     resetUploadContainer();
+//     if(document.querySelector('.imageDisplayUploadBox')!= null){
+//     document.querySelector('.imageDisplayUploadBox').remove()}
+//     else{return}
+// })}
 
-const allClose = async function(e){
-    if(e === input[type='submit']){e.preventDefault();}
-    isClose(modalModificationContainer);
-    isClose(modalUploadContainer);
-    isClose(modalWrapper);
-    isClose(overlay);
-    isClose(modalArrow);
-    isClose(modalXmark);
-    isClose(modalCtrl);
-}
+// const isActive = async function(e){
+//     e.classList.add('active')
+//     if(modalWrapper){
+//         wrapperHeightActive(e)
+//     }
+// }
 
-const isEdit = async function (e){
-    if(e.target ==ajoutPhotoButton){
-    e.preventDefault();}
-    isClose(modalModificationContainer);
-    wrapperHeightRemove(modalWrapper);
-    isActive(modalArrow);
-    isActive(modalUploadContainer);
-}
+// const isToggle = async function (e){
+//     e.classList.toggle('active');
+// }
 
-const isClose = async function (e){
-    e.classList.remove('active');
-    if(modalWrapper){
-        e.classList.remove('height')
-    }
-}
+// const allClose = async function(e){
+//     if(e === input[type='submit']){e.preventDefault();}
+//     isClose(modalModificationContainer);
+//     isClose(modalUploadContainer);
+//     isClose(modalWrapper);
+//     isClose(overlay);
+//     isClose(modalArrow);
+//     isClose(modalXmark);
+//     isClose(modalCtrl);
+// }
 
-const wrapperHeightRemove = async function (e) {
-    e.classList.remove('height')
-}
+// const isEdit = async function (e){
+//     if(e.target ==ajoutPhotoButton){
+//     e.preventDefault();}
+//     isClose(modalModificationContainer);
+//     wrapperHeightRemove(modalWrapper);
+//     isActive(modalArrow);
+//     isActive(modalUploadContainer);
+// }
 
-const wrapperHeightActive = async function (e) {
-    e.classList.add('height')
-}
+// const isClose = async function (e){
+//     e.classList.remove('active');
+//     if(modalWrapper){
+//         e.classList.remove('height')
+//     }
+// }
 
-const resetUploadContainer = async function  () {
-    const i = document.querySelector('.fa-image');
-    const b = document.querySelector('#imgUploadLabel');
-    const p = document.querySelector('.modal-upload-condition');
-    formUpload.reset()
-    i.style.opacity ='1';
-    b.style.opacity ='1';
-    p.style.opacity ='1';
-}
+// const wrapperHeightRemove = async function (e) {
+//     e.classList.remove('height')
+// }
+
+// const wrapperHeightActive = async function (e) {
+//     e.classList.add('height')
+// }
+
+// const resetUploadContainer = async function  () {
+//     const i = document.querySelector('.fa-image');
+//     const b = document.querySelector('#imgUploadLabel');
+//     const p = document.querySelector('.modal-upload-condition');
+//     formUpload.reset()
+//     i.style.opacity ='1';
+//     b.style.opacity ='1';
+//     p.style.opacity ='1';
+// }
 
 //********************** UPLOAD IMAGE ********************************/
- var imageBase64
 
-async function Affichage (){
- inputFileImage.addEventListener('change',(file) =>{
+
+var imageBase64
+if(isTokenPresent){
+    if(document.querySelector('.modal-wrapper') === true){
+async function Affichage (file){
     const inputImg = file.target.files[0]
     recupInputImage(inputImg)
-});
-}
+};
+
 function recupInputImage (inputImg) {
     if(!inputImg){ 
         messageErreurModal(modalWrapper , "Pas de fichier à upload !")
@@ -407,7 +460,7 @@ function messageValidModal(lieu, message){
     lieu.prepend(Span);
     setTimeout(() => Span.remove(), 1500)
 }
-
+}}
 //********************** SUPPRIMER ********************************/
 
 
@@ -438,6 +491,7 @@ document.querySelectorAll('.fa-trash-can').forEach((element, index)=>{
 /************************* ENVOI UPLOAD ******************************/
 
 async function submitFunction (){
+const formUpload = document.querySelector('#modal-upload-form')
 formUpload.addEventListener('submit', async (event) => {
     event.preventDefault();
 

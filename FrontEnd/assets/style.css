@@ -350,7 +350,7 @@ footer nav ul {
 }
 
 .modal-wrapper.active.height {
-    height:731px;
+    min-height:731px;
 }
 
 .fa-arrow-left{
@@ -468,7 +468,7 @@ footer nav ul {
 
 }
 
-.modal-wrapper > hr {
+.modal-wrapper hr {
     color: #B3B3B3;
     width: 70%;
     height: 1px;
@@ -476,7 +476,7 @@ footer nav ul {
 
 .modal-gallery{
     width: 70%;
-    margin: 46px 0px;
+    margin: 46px 0px 20px;
     display: flex;
     flex-wrap: wrap;
 }
@@ -511,6 +511,7 @@ background-color :#A7A7A7 ;
     text-decoration: none;
     font-size: 14px;
     font-family: 'Syne';
+    margin-bottom: 20px;
 }
 
 #modal-upload-form,
