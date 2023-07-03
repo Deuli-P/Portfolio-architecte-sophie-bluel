@@ -66,37 +66,38 @@ function init () {
                         const modalModificationContainer = document.querySelector('#modal-gallery-id');
                         const modalUploadContainer = document.querySelector('#modal-upload-id');
                         if(event.target.classList.contains('js-modal-open')){
-                            console.log('click');
+                            console.log('click open');
                             event.preventDefault();
-                            overlay.classList.add('active')
+                            isActive(overlay);
                             modalWrapper.setAttribute('class','modal-wrapper active height');
-                            modalModificationContainer.classList.add('active')
-                            modalCtrl.classList.add('active')
+                            isActive(modalModificationContainer);
+                            isActive(modalCtrl);
+
                         }
                         else if (event.target.classList.contains('js-modal-allclose')){
-                            console.log('click');
+                            console.log('click close');
                             event.preventDefault();
-                            overlay.classList.remove('active');
-                            modalCtrl.classList.remove('active');
+                            isClose(overlay);
+                            isClose(modalCtrl);
                             modalWrapper.setAttribute('class','modal-wrapper');
-                            modalModificationContainer.classList.remove('active');
-                            modalXmark.classList.remove('active');
-                            if(modalArrow.classList.contains('active')){modalArrow.classList.remove('active')}
-                            if(modalUploadContainer.classList.contains('active')){modalUploadContainer.classList.remove('active')}
+                            isClose(modalModificationContainer);
+                            isClose(modalXmark);
+                            if(modalArrow.classList.contains('active')){isClose(modalArrow);}
+                            if(modalUploadContainer.classList.contains('active')){isClose(modalUploadContainer);}
                         }
                         else if (event.target.classList.contains('modal-modification-button')){
                             event.preventDefault();
-                            modalModificationContainer.classList.remove('active');
-                            modalWrapper.classList.remove('height');
-                            modalUploadContainer.classList.add('active');
-                            modalArrow.classList.add('active')
+                            isClose(modalModificationContainer);
+                            wrapperHeightRemove(modalWrapper);
+                            isActive(modalUploadContainer);
+                            isActive(modalArrow);
                         }
                         else if (event.target.classList.contains('fa-arrow-left')){
                             event.preventDefault();
-                            modalModificationContainer.classList.add('active');
-                            modalUploadContainer.classList.remove('active');
-                            modalArrow.classList.remove('active');
-                            modalWrapper.classList.add('height');
+                            isActive(modalModificationContainer);
+                            isClose(modalUploadContainer);
+                            isClose(modalArrow);
+                            wrapperHeightActive(modalWrapper);
                             const i = document.querySelector('.fa-image');
                             const b = document.querySelector('#imgUploadLabel');
                             const p = document.querySelector('.modal-upload-condition');
@@ -106,6 +107,27 @@ function init () {
                             b.style.opacity ='1';
                             p.style.opacity ='1';
                         }
+                        else if (event.target.classList.contains('fa-trash')){
+                            event.addEventListener('click',(event) =>{
+                            if(confirm(`Voulez-vous supprimer l'élement ciblé?`)){
+                                const idParent = library[index].id;
+                                let elementSupp = document.querySelector(`[data-id="${idParent}"]`);
+                                console.log(elementSupp);
+                                console.log(`${apiUrl}works/${idParent} supprime: ${library[index].title}`);
+                                const suppression = fetch (`${urlWork}/${idParent}`,{
+                                    method : 'DELETE',
+                                    headers : {'Authorization': `Bearer ${token}`,
+                                                "Accept": "*/*"}
+                                })
+                                .then(suppression => suppression.ok)
+                                .then(console.log('Suprression reussi !'),
+                                    elementSupp.remove(),
+                                    messageValidModal( document.querySelector('body'),"Suppression reussi !"),
+                                    console.log(library)
+                                )
+                    
+                            }else{return}
+                        })}
                     })
                     // const inputFileImage = document.querySelector('#imgUpload');
                     // inputFileImage.addEventListener('change',(file) =>{ Affichage(file)})
@@ -121,6 +143,7 @@ function init () {
             return
         }
 };
+//************************** CARD MODAL GALLERY ******************//
 
 const cardModalCreate = async function (element) {
     const modalGallery = document.querySelector('.modal-gallery')
@@ -141,6 +164,7 @@ const cardModalCreate = async function (element) {
     cardGallery.appendChild(cardGallerySpan);
     modalGallery.appendChild(cardGallery);
 }
+// ****************** OPTION SELECT D'UPLOAD ************************//
 
 const optionSelectCreate = async function(element){
     const optionCategory = document.createElement('option')
@@ -257,33 +281,28 @@ function isTokenPresent() {
 
 
 //------------------------BANNER LOG IN ----------------//
-function bannerLogin (element){
-    const bannerLogIn = document.createElement('div');
-    bannerLogIn.classList.add('log-in');
-    // Lien pour ouvrir Modal
-    const bannerLienMofidier = document.createElement('a');
-    bannerLienMofidier.setAttribute('class','buttonEdition js-modal-open')
-    bannerLienMofidier.setAttribute("href",'#modal-overlay')
-    bannerLienMofidier.innerHTML='<i class="fa-regular fa-pen-to-square"></i> Mode édition';
-    //Lien pour valider le changement dans projet
-    const bannerLienPublish = document.createElement('a');
-    bannerLienPublish.setAttribute('class','buttonPublish js-valid-modification');
-    bannerLienPublish.innerText="publier les changements";
-    bannerLogIn.appendChild(bannerLienMofidier);
-    bannerLogIn.appendChild(bannerLienPublish);
-    loginContainer.prepend(bannerLogIn);
-};
+// Utile si on l'enleve de modalHtml
+
+// function bannerLogin (element){
+//     const bannerLogIn = document.createElement('div');
+//     bannerLogIn.classList.add('log-in');
+//     // Lien pour ouvrir Modal
+//     const bannerLienMofidier = document.createElement('a');
+//     bannerLienMofidier.setAttribute('class','buttonEdition js-modal-open')
+//     bannerLienMofidier.setAttribute("href",'#modal-overlay')
+//     bannerLienMofidier.innerHTML='<i class="fa-regular fa-pen-to-square"></i> Mode édition';
+//     //Lien pour valider le changement dans projet
+//     const bannerLienPublish = document.createElement('a');
+//     bannerLienPublish.setAttribute('class','buttonPublish js-valid-modification');
+//     bannerLienPublish.innerText="publier les changements";
+//     bannerLogIn.appendChild(bannerLienMofidier);
+//     bannerLogIn.appendChild(bannerLienPublish);
+//     loginContainer.prepend(bannerLogIn);
+// };
 
 // ------------------------- MODAL ----------------------------//
 
-//************************** CARD MODAL GALLERY ******************//
-/**
- * 
- * @param {object} element 
- */
 
-
-// ****************** OPTION SELECT D'UPLOAD ************************//
 
 
 
@@ -340,12 +359,10 @@ function bannerLogin (element){
 //     else{return}
 // })}
 
-// const isActive = async function(e){
-//     e.classList.add('active')
-//     if(modalWrapper){
-//         wrapperHeightActive(e)
-//     }
-// }
+const isActive = async function(e){
+    e.classList.add('active')
+
+}
 
 // const isToggle = async function (e){
 //     e.classList.toggle('active');
@@ -371,20 +388,17 @@ function bannerLogin (element){
 //     isActive(modalUploadContainer);
 // }
 
-// const isClose = async function (e){
-//     e.classList.remove('active');
-//     if(modalWrapper){
-//         e.classList.remove('height')
-//     }
-// }
+const isClose = async function (e){
+    e.classList.remove('active');
+}
 
-// const wrapperHeightRemove = async function (e) {
-//     e.classList.remove('height')
-// }
+const wrapperHeightRemove = async function (e) {
+    e.classList.remove('height')
+}
 
-// const wrapperHeightActive = async function (e) {
-//     e.classList.add('height')
-// }
+const wrapperHeightActive = async function (e) {
+    e.classList.add('height')
+}
 
 // const resetUploadContainer = async function  () {
 //     const i = document.querySelector('.fa-image');
@@ -398,15 +412,14 @@ function bannerLogin (element){
 
 //********************** UPLOAD IMAGE ********************************/
 
-
+async function Affichage(){
 var imageBase64
 if(isTokenPresent){
-    if(document.querySelector('.modal-wrapper') === true){
-async function Affichage (file){
-    const inputImg = file.target.files[0]
-    recupInputImage(inputImg)
-};
+        const inputFileImage = document.querySelector('#imgUpload');
+        const inputImg = inputFileImage.target.files[0]
+        console.log('blop');
 
+        
 function recupInputImage (inputImg) {
     if(!inputImg){ 
         messageErreurModal(modalWrapper , "Pas de fichier à upload !")
@@ -460,13 +473,13 @@ function messageValidModal(lieu, message){
     lieu.prepend(Span);
     setTimeout(() => Span.remove(), 1500)
 }
-}}
+    }
+
+}
 //********************** SUPPRIMER ********************************/
 
-
-document.querySelectorAll('.fa-trash-can').forEach((element, index)=>{
-    element.addEventListener('click', (event) =>{
-        console.log('click');
+document.classList.contains('fa-trash-can').addEventListener('click',(element)=>{
+    console.log('click supp');
         if(confirm(`Voulez-vous supprimer l'élement ciblé?`)){
             const idParent = library[index].id;
             let elementSupp = document.querySelector(`[data-id="${idParent}"]`);
@@ -485,16 +498,43 @@ document.querySelectorAll('.fa-trash-can').forEach((element, index)=>{
             )
 
         }else{return}
-    });
-});
+})
+
+// Code original
+// document.querySelectorAll('.fa-trash-can').forEach((element, index)=>{
+//     element.addEventListener('click', (event) =>{
+//         console.log('click supp');
+//         if(confirm(`Voulez-vous supprimer l'élement ciblé?`)){
+//             const idParent = library[index].id;
+//             let elementSupp = document.querySelector(`[data-id="${idParent}"]`);
+//             console.log(elementSupp);
+//             console.log(`${apiUrl}works/${idParent} supprime: ${library[index].title}`);
+//             const suppression = fetch (`${urlWork}/${idParent}`,{
+//                 method : 'DELETE',
+//                 headers : {'Authorization': `Bearer ${token}`,
+//                             "Accept": "*/*"}
+//             })
+//             .then(suppression => suppression.ok)
+//             .then(console.log('Suprression reussi !'),
+//                 elementSupp.remove(),
+//                 messageValidModal( document.querySelector('body'),"Suppression reussi !"),
+//                 console.log(library)
+//             )
+
+//         }else{return}
+//     });
+// });
 
 /************************* ENVOI UPLOAD ******************************/
 
 async function submitFunction (){
 const formUpload = document.querySelector('#modal-upload-form')
+
 formUpload.addEventListener('submit', async (event) => {
     event.preventDefault();
-
+    const inputFileTitre = document.querySelector('#modal-upload-title');
+    const inputFileSelect = document.querySelector('#modal-upload-category');
+    const inputFileImage = document.querySelector('#imgUpload');
     const titre = inputFileTitre.value.trim();
     const category = inputFileSelect.value;
     const myRegex = /^[a-zA-Z\s-]+$/;
@@ -510,8 +550,6 @@ formUpload.addEventListener('submit', async (event) => {
     }
 
 
-    const inputFileTitre = document.querySelector('#modal-upload-title');
-    const inputFileSelect = document.querySelector('#modal-upload-category');
 
 
     let formData = new FormData();

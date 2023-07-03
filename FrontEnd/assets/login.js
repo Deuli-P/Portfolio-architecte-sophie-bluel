@@ -1,7 +1,6 @@
 
 const formLogin = document.querySelector("form");
 const buttonConnection = document.querySelector('input [type="submit"]')
-const valid = true;
 const messageErreur = "L'email ou/et le mot de passe sont incorrects"
 
 //Lors du clique sur le submit ça envoi 
