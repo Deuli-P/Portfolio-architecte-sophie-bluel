@@ -24,6 +24,7 @@ let formUpload = null
 let inputFileImage = null
 let arrowCtrl = null
 let modalXmark = null
+let galleryButton = null
 let editionButton = null
 let modalArrow = null
 let ajoutPhotoButton = null
@@ -33,6 +34,7 @@ let inputFileTitre = null
 let inputFileSelect = null
 let titre = null
 let categorySelect = null
+let inputSubmitButton = null
 
 //****** VARIABLE Pouvant etre lu apres l'import de la modal ********/
 export function initModal(){
@@ -50,10 +52,12 @@ export function initModal(){
     editionButton = document.querySelector('.buttonEdition');
     modalArrow = document.querySelector('.fa-arrow-left');
     modalXmark = document.querySelector('.fa-xmark');
+    galleryButton = document.querySelector('.modal-gallery-button');
     ajoutPhotoButton = document.querySelector('.modal-modification-button');
     selectUpload = document.querySelector('#modal-upload-category');
     inputFileTitre = document.querySelector('#modal-upload-title');
     inputFileSelect = document.querySelector('#modal-upload-category');
+    inputSubmitButton = document.querySelector('#modal-upload-button');
 }
 
 
@@ -63,6 +67,7 @@ export function openModal(){
         e.preventDefault();
         isActive(overlay);
         isActive(modalWrapper);
+        isActive(galleryButton);
         wrapperHeightActive(modalWrapper);
         isActive(modalModificationContainer);
         isActive(modalCtrl);
@@ -91,6 +96,7 @@ export function switchModal(){
         e.preventDefault();
         isClose(arrowCtrl)
         isClose(modalUploadContainer);
+        isActive(galleryButton);
         wrapperHeightActive(modalWrapper);
         isActive(modalModificationContainer);
         resetUploadContainer();
@@ -105,7 +111,7 @@ export function switchModal(){
  */
 function isActive(element){
     element.classList.add('active')
-    if(modalWrapper){
+    if(element === modalWrapper){
         element.classList.add('height')
     }
 }
@@ -131,6 +137,7 @@ function allClose(e){
     isClose(arrowCtrl);
     isClose(modalXmark);
     isClose(modalCtrl);
+    isClose(galleryButton);
 }
 
 /**
@@ -141,6 +148,7 @@ function isEdit(element){
     if(element.target ==ajoutPhotoButton){
     element.preventDefault();}
     isClose(modalModificationContainer);
+    isClose(galleryButton);
     wrapperHeightRemove(modalWrapper);
     isActive(arrowCtrl);
     isActive(modalUploadContainer);
@@ -151,7 +159,7 @@ function isEdit(element){
  */
 function isClose (element){
     element.classList.remove('active');
-    if(modalWrapper){
+    if(element === modalWrapper){
         element.classList.remove('height')
     }
 }
@@ -195,6 +203,7 @@ export function cardModalCreate(element) {
     cardGalleryArrow.setAttribute('class', 'fa-solid fa-arrows-up-down-left-right');
     const cardGalleryTrash = document.createElement('i');
     cardGalleryTrash.setAttribute('class', 'fa-solid fa-trash-can');
+    cardGalleryTrash.setAttribute('data-id',element.id);
     const cardGallerySpan = document.createElement('span');
     cardGallerySpan.innerText ='éditer';
     cardGallery.appendChild(cardGalleryIMG);
@@ -228,8 +237,9 @@ export function detruire(){
     const trashButton = document.querySelectorAll('.fa-trash-can').forEach((element, index)=>{
         element.addEventListener('click', (event) =>{
             if(confirm(`Voulez-vous supprimer l'élement ciblé?`)){
-                const idParent = library[index].id;
-                let elementSupp = document.querySelector(`[data-id="${idParent}"]`);
+                // const idParent = library[index].id;
+                const idParent = element.getAttribute('data-id');
+                let elementSupp = document.querySelectorAll(`[data-id="${idParent}"]`);
                 const suppression = fetch (`${urlWork}/${idParent}`,{
                     method : 'DELETE',
                     headers : {'Authorization': `Bearer ${token}`,
@@ -237,10 +247,12 @@ export function detruire(){
                 })
                 .then(suppression => suppression.ok)
                 .then(
-                    elementSupp.remove(),
+                    elementSupp.forEach(elt=> {
+                        elt.remove();
+
+                    }),
                     messageValidModal( document.querySelector('body'),"Suppression reussi !"),
                 )
-
             }else{return}
         });
 });
@@ -314,6 +326,10 @@ function messageValidModal(lieu, message){
 /************************* ENVOI UPLOAD ******************************/
 export function addProjet (){
 
+formUpload.addEventListener('input', function () {
+    const ToutRempli = Array.from(formUpload.elements).every(element => element.checkValidity());
+    inputSubmitButton.disabled = !ToutRempli;
+  });
 
 formUpload.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -353,18 +369,19 @@ formUpload.addEventListener('submit', async (event) => {
 
             if (sendWork.ok) {
                 messageValidModal(modalWrapper, "Envoi réussi !");
-                const element = library.findLast((element)=> element.id)
-                window.location.reload();
-                // cardModalCreate(element)
-                // worksCreate(element)
-                // detruire()
+                const reponseWorksAdd = await fetch(`${urlWork}`);
+                const libraryAdd = await reponseWorksAdd.json();
+                const element = libraryAdd.findLast((element)=> element.id)
+                cardModalCreate(element)
+                worksCreate(element)
+                detruire()
             } else {
                 messageErreurModal(modalWrapper, "Envoi refusé !")
                 console.log("Échec de l'envoi !");
             }
         } 
         catch (error) {
-                console.log("Erreur accès serveur");
+                console.log("Erreur accès serveur" , error);
                 messageErreurModal(modalWrapper, "Impossible d'accéder au serveur");
         }
     });

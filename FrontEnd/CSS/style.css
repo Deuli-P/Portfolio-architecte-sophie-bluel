@@ -48,6 +48,7 @@ table {
 	border-spacing: 0;
 }
 /** end reset css**/
+
 .main-container {
 	max-width: 1140px;
 	margin:auto;
@@ -56,6 +57,20 @@ table {
     display: flex;
     flex-direction: column;
     position: relative;
+}
+
+.Button {
+    font-family: 'Syne';
+	font-weight: 700;
+	color: white;
+	background-color: #1D6154;
+	text-align: center;
+	border-radius: 60px;
+
+}
+
+.Button:active {
+    background-color: #0E2F28;
 }
 
 /** Log In Bandeau **/
@@ -127,7 +142,7 @@ h2{
 	font-family: 'Syne';
 	font-weight: 700;
 	font-size: 30px;
-	color: #1D6154
+	color: #1D6154;
 }
 nav ul {
 	display: flex;
@@ -212,14 +227,17 @@ margin: auto;
 }
 #contact form,
 #login-section form {
+    width: 100%;
 	text-align: left;
 	margin-top:30px;
 	display: flex;
+    align-items: center;
 	flex-direction: column;
 }
 
 #contact input,
 #login-section input {
+    width: 100%;
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
@@ -237,25 +255,20 @@ margin: auto;
 	margin: 2em 0 1em 0;
 }
 #contact textarea {
+    width: 100%;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"],
-.modal-modification-button {
-	font-family: 'Syne';
-	font-weight: 700;
-	color: white;
-	background-color: #1D6154;
-	margin : 2em auto ;
-	width: 180px;
-	text-align: center;
-	border-radius: 60px ;
+#contact .Button{
+    width: 260px;
+    margin: 50px 0;
 }
 
-input[type="submit"]:active,
-.modal-modification-button:active{
-	background-color: #0E2F28;
+#login-section .Button{
+    
+	margin : 2em auto ;
+	width: 220px;
 }
 
 #login-section a {
@@ -309,6 +322,7 @@ footer nav ul {
 	padding: 9px 9px;
 }
 
+
 /****************** MODAL ***************/ 
 
 @keyframes notifAnimation {
@@ -353,9 +367,7 @@ footer nav ul {
 }
 
 .modal-wrapper.active.height {
-    box-sizing: content-box;
-    min-height:730px;
-    height: fit-content +90px;
+    height:730px;
 }
 
 .fa-arrow-left{
@@ -374,7 +386,8 @@ footer nav ul {
     align-items: center;
     position: absolute;
 }
-#modal-gallery-id {
+#modal-gallery-id,
+.modal-gallery-button {
     visibility: hidden;
     opacity: 0;
     transition: transform 0.3s ease-out, opacity 0.2s;
@@ -393,7 +406,8 @@ footer nav ul {
     transform: translateX(0px);
 }
 
-#modal-gallery-id.active{
+#modal-gallery-id.active,
+.modal-gallery-button.active{
     visibility: visible;
     opacity: 1;
     transform: translateX(0);
@@ -439,7 +453,7 @@ footer nav ul {
     background-color: rgb(219, 86, 86);
     color: rgb(82, 13, 13);
     animation: notifAnimation infinite 1s ease-in-out ;
-    animation: opacityBox 0.5s ease-in-out ease-in-out;
+    animation: opacityBox 0.5s  ease-in-out;
 }
 
 .valid{
@@ -473,7 +487,8 @@ footer nav ul {
 
 }
 
-.modal-wrapper > hr {
+.modal-wrapper hr {
+
     color: #B3B3B3;
     width: 70%;
     height: 1px;
@@ -486,30 +501,26 @@ footer nav ul {
     flex-wrap: wrap;
 }
 
+.modal-gallery-button{
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 30px;
+    width: 100%;
+}
 .modal-modification-button,
 #modal-upload-id input[type="submit"] {
-    background-color: #1D6154;
-    color: white;
     padding: 10px 50px;
     border: none;
     border-radius: 20px;
     text-decoration: none;
-    font-family: 'Syne';
-    font-weight: 700;
     font-size: 14px;
     margin: 35px 0px;
 }
 
-.modal-modification-button:active,
-#modal-upload-id input[type="submit"]:active {
-background-color :#0E2F28 ;
-}
 
-.modal-modification-button::before,
-#modal-upload-id input[type="submit"]::before {
-    content: "";
-background-color :#A7A7A7 ;
-}
 
 .modal-modification-suppAll {
     color: rgb(209, 61, 61);
@@ -600,6 +611,9 @@ background-color :#A7A7A7 ;
     margin-bottom: 47px;
 }
 
+#modal-upload-button:disabled{
+    background-color: grey;
+}
 
 /* ---------CARD GALERY MODAL ---------- */
 
@@ -652,6 +666,8 @@ background-color :#A7A7A7 ;
 .card-gallery span:hover {
     font-weight: bold;
 }
+
+
 
 /************** LOGIN *************/
 
